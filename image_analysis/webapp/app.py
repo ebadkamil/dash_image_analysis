@@ -63,3 +63,31 @@ class DashApp:
                 raise dash.exceptions.PreventUpdate
             return ((virtual.used/1024**3), ceil((virtual.total/1024**3)),
                     (swap.used/1024**3), ceil((swap.total/1024**3)))
+
+        @self._app.callback(
+            Output('stream-info', 'children'),
+            [Input('stream', 'on')],
+            [State('run-folder', 'value'),
+             State('port', 'value')])
+        def stream(state, folder, port):
+            info = ""
+            if state:
+                if not (folder and port):
+                    info = f"Either Folder or port number missing"
+                    return [info]
+                self._file_server = FileServer(folder, port)
+                try:
+                    print("Start ", self._file_server)
+                    self._file_server.start()
+                    info = f"Serving file in the folder {folder} through port {port}"
+                except Exception as ex:
+                    info = repr(ex)
+            elif not state:
+                print("Shutdown ", self._file_server)
+                if self._file_server is not None and self._file_server.is_alive():
+                    info = "Shutdown File Server"
+                    self._file_server.terminate()
+                if self._file_server is not None:
+                    self._file_server.join()
+
+            return [info]
