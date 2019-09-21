@@ -5,20 +5,10 @@ Author: Ebad Kamil <kamilebad@gmail.com>
 Copyright (C) European X-Ray Free-Electron Laser Facility GmbH.
 All rights reserved.
 """
-from collections import deque
-from concurrent.futures import ThreadPoolExecutor
-import functools
-import numpy as np
 import queue
-from scipy import constants
 from threading import Thread, Event
 
 from karabo_bridge import Client
-from karabo_data import stack_detector_data
-from karabo_data.geometry2 import LPD_1MGeometry, AGIPD_1MGeometry
-from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
-
-from .config import config
 
 
 class DaqWorker(Thread):
@@ -41,4 +31,3 @@ class DaqWorker(Thread):
 
     def terminate(self):
         self._running = False
-
