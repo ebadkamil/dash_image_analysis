@@ -19,6 +19,7 @@ from pyFAI.azimuthalIntegrator import AzimuthalIntegrator
 
 from .config import config
 
+
 class DataProcessorWorker(Thread):
     def __init__(self, in_queue, out_queue):
         super().__init__()
