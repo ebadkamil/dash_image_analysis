@@ -101,3 +101,17 @@ class DashApp:
                     self._file_server.join()
 
             return [info]
+
+    def _update(self):
+        try:
+            self._data = self._proc_queue.get_nowait()
+        except queue.Empty:
+            self._data = None
+
+    def recieve(self):
+        self.reciever.daemon = True
+        self.reciever.start()
+
+    def process(self):
+        self.processor.daemon = True
+        self.processor.start()
