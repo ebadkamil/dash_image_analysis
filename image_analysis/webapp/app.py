@@ -102,6 +102,24 @@ class DashApp:
 
             return [info]
 
+        @self._app.callback(Output('mean-image', 'figure'),
+                            [Input('color-scale', 'value'),
+                             Input('train-id', 'value')])
+        def update_image_figure(color_scale, tid):
+            if self._data.tid != int(tid) or self._data.image is None:
+                raise dash.exceptions.PreventUpdate
+
+            traces = [go.Heatmap(
+                z=self._data.image[::3, ::3], colorscale=color_scale)]
+            figure = {
+                'data': traces,
+                'layout': go.Layout(
+                    margin={'l': 40, 'b': 40, 't': 40, 'r': 10},
+                )
+            }
+
+            return figure
+
     def _update(self):
         try:
             self._data = self._proc_queue.get_nowait()
