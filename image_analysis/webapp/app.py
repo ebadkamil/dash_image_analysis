@@ -120,6 +120,24 @@ class DashApp:
 
             return figure
 
+        @self._app.callback(Output('histogram', 'figure'),
+                            [Input('train-id', 'value')])
+        def update_histogram_figure(tid):
+            if self._data.tid != int(tid) or self._data.image is None:
+                raise dash.exceptions.PreventUpdate
+            hist, bins = np.histogram(self._data.image.ravel(), bins=10)
+            bin_center = (bins[1:] + bins[:-1])/2.0
+            traces = [{'x': bin_center, 'y': hist,
+                       'type': 'bar'}]
+            figure = {
+                'data': traces,
+                'layout': go.Layout(
+                    margin={'l': 40, 'b': 40, 't': 40, 'r': 10},
+                )
+            }
+
+            return figure
+
     def _update(self):
         try:
             self._data = self._proc_queue.get_nowait()
