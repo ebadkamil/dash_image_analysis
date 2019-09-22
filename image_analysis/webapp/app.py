@@ -16,6 +16,8 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 
+from .core import (
+    config, DaqWorker, DataProcessorWorker, FileServer, ProcessedData)
 from .layout import get_layout, _SOURCE
 from ..helpers import get_virtual_memory
 
@@ -32,6 +34,14 @@ class DashApp:
         config["DETECTOR"] = detector
         self._config = config[detector]
         self._app = app
+
+        self._data = None
+        self._data_queue = Queue(maxsize=1)
+        self._proc_queue = Queue(maxsize=1)
+        self.reciever = DaqWorker(
+            self._hostname, self._port, self._data_queue)
+        self.processor = DataProcessorWorker(
+            self._data_queue, self._proc_queue)
 
         self.setLayout()
         self.register_callbacks()
