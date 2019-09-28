@@ -138,6 +138,45 @@ class DashApp:
 
             return figure
 
+        @self._app.callback(Output('ai-integral', 'figure'),
+                            [Input('train-id', 'value')],
+                            [State('analysis-type', 'value'),
+                             State('roi-projection', 'value'),
+                             State('n-pulses', 'value')]
+                            )
+        def update_correlation_figure(tid, analysis_type, projection, pulses):
+            if self._data.tid != int(tid):
+                raise dash.exceptions.PreventUpdate
+            if analysis_type == "ROI":
+                try:
+                    y = getattr(self._data, f"{projection}")
+                    traces = [go.Scatter(
+                        x=np.arange(y.shape[1]), y=y[i]) for i in range(
+                            y[:pulses, ...].shape[0])]
+                except Exception:
+                    raise dash.exceptions.PreventUpdate
+            elif analysis_type == "AzimuthalIntegration":
+                try:
+                    y = getattr(self._data, "intensities")
+                    x = getattr(self._data, "momentum")
+                    traces = [go.Scatter(x=x, y=y[i])
+                              for i in range(y[:pulses, ...].shape[0])]
+                except Exception as ex:
+                    raise dash.exceptions.PreventUpdate
+            else:
+                raise dash.exceptions.PreventUpdate
+
+            figure = {
+                'data': traces,
+                'layout': go.Layout(
+                    xaxis={'title': 'q'},
+                    yaxis={'title': 'I(q)'},
+                    margin={'l': 40, 'b': 40, 't': 40, 'r': 10},
+                    hovermode='closest',
+                    showlegend=False)}
+
+            return figure
+
     def _update(self):
         try:
             self._data = self._proc_queue.get_nowait()
