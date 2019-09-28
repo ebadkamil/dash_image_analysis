@@ -177,6 +177,30 @@ class DashApp:
 
             return figure
 
+        @self._app.callback(Output('fom-plot', 'figure'),
+                            [Input('train-id', 'value')])
+        def update_fom_figure(tid):
+            if self._data.tid != int(tid):
+                raise dash.exceptions.PreventUpdate
+
+            data = self._data.fom
+            if data is None:
+                raise dash.exceptions.PreventUpdate
+            data = list(data)
+            traces = [go.Box(
+                y=foms,
+                name=str(tid), marker_color='lightseagreen',
+                boxmean='sd') for tid, foms in data]
+            figure = {
+                'data': traces,
+                'layout': go.Layout(
+                    margin={'l': 40, 'b': 40, 't': 40, 'r': 10},
+                    showlegend=False,
+                )
+            }
+
+            return figure
+
     def _update(self):
         try:
             self._data = self._proc_queue.get_nowait()
