@@ -201,6 +201,53 @@ class DashApp:
 
             return figure
 
+        @self._app.callback(Output('logger', 'children'),
+                            [Input('train-id', 'value')],
+                            [State('analysis-type', 'value'),
+                             State('energy', 'value'),
+                             State('distance', 'value'),
+                             State('pixel-size', 'value'),
+                             State('centrex', 'value'),
+                             State('centrey', 'value'),
+                             State('int-mthd', 'value'),
+                             State('int-pts', 'value'),
+                             State('int-rng', 'value'),
+                             State('mask-rng', 'value'),
+                             State('geom-file', 'value'),
+                             State('source', 'value')
+                             ]
+                            )
+        def update_params(tid,
+                          analysis_type,
+                          energy,
+                          distance,
+                          pixel_size,
+                          centerx,
+                          centery,
+                          int_mthd,
+                          int_pts,
+                          int_rng,
+                          mask_rng,
+                          geom_file,
+                          source):
+            self.processor.onAnalysisTypeChange(analysis_type)
+            ai_params = dict(
+                energy=energy,
+                distance=distance,
+                pixel_size=pixel_size,
+                centerx=centerx,
+                centery=centery,
+                int_mthd=int_mthd,
+                int_pts=int_pts,
+                int_rng=int_rng,
+                mask_rng=mask_rng
+            )
+            self.processor.onAiParamsChange(ai_params)
+            self.processor.onSourceNameChange(source)
+            self.processor.onGeomFileChange(geom_file)
+
+            return f"{analysis_type} registered"
+
     def _update(self):
         try:
             self._data = self._proc_queue.get_nowait()
