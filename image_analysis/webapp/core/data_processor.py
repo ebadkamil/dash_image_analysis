@@ -152,7 +152,8 @@ class DataProcessorWorker(Thread):
         processed.fom = self._fom
 
     def _update_integrator(self):
-        self._wavelength = energy2wavelength(self._ai_params["energy"])
+        constant = 1e-3 * constants.c * constants.h / constants.e
+        self._wavelength = constant / self._ai_params["energy"]
         self._distance = self._ai_params["distance"]
         self._poni1 = \
             self._ai_params["centery"] * self._ai_params["pixel_size"]
@@ -227,12 +228,6 @@ class ProcessedData:
     @property
     def tid(self):
         return self._tid
-
-
-def energy2wavelength(energy):
-    # Plank-einstein relation (E=hv)
-    HC_E = 1e-3 * constants.c * constants.h / constants.e
-    return HC_E / energy
 
 
 def slice_curve(y, x, x_min=None, x_max=None):

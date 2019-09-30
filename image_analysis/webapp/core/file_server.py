@@ -14,6 +14,7 @@ from time import time
 from karabo_data import RunDirectory, ZMQStreamer
 from .config import config
 
+
 def generate_meta(sources, tid):
     """Generate metadata in case of repeat stream"""
 
