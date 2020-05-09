@@ -2,7 +2,6 @@
 Image analysis and web visualization
 
 Author: Ebad Kamil <kamilebad@gmail.com>
-Copyright (C) European X-Ray Free-Electron Laser Facility GmbH.
 All rights reserved.
 """
 from math import ceil
