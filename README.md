@@ -1,4 +1,8 @@
 # Dash based Image Analysis
+  - Multi-threaded DASH application that mimics experiments from EuXFEL HDF5 files
+    - ZMQ server streams data stored in files in a sub-process.
+    - **DASH** app receives data through ZMQ client
+    - Data Processor perform Azimuthal integration and ROI analysis.
 
 Installing
 ==========
